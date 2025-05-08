@@ -18,7 +18,7 @@ async def send_food_reminder(application):
             await asyncio.sleep(86400)
         await asyncio.sleep(3600)
 
-if name == __main__:
+if name == '__main__':
     app = ApplicationBuilder().token(TOKEN).build()
     app.chat_ids = set()
 
