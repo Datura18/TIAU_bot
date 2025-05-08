@@ -9,24 +9,27 @@ TOKEN = os.getenv("TOKEN")
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("سلام! به ربات دانشگاه هنر خوش اومدی!")
 
-async def send_food_reminder(application):
+async def send_food_reminder(app):
     while True:
         now = datetime.datetime.now()
         if now.weekday() == 2 and now.hour == 9:
-            for chat_id in application.chat_ids:
-                await application.bot.send_message(chat_id=chat_id, text="یادت نره غذاتو رزرو کنی!")
+            for chat_id in app.chat_ids:
+                await app.bot.send_message(chat_id=chat_id, text="یادت نره غذاتو رزرو کنی!")
             await asyncio.sleep(86400)
         await asyncio.sleep(3600)
 
-if __name__ == '__main__':
+async def save_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    update.application.chat_ids.add(update.message.chat_id)
+
+async def main():
     app = ApplicationBuilder().token(TOKEN).build()
     app.chat_ids = set()
-
-    async def save_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
-        app.chat_ids.add(update.message.chat_id)
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("start", save_chat))
 
-    app.run_async(send_food_reminder(app))
-    app.run_polling()
+    asyncio.create_task(send_food_reminder(app))
+    await app.run_polling()
+
+if __name__ == '__main__':
+    asyncio.run(main())
