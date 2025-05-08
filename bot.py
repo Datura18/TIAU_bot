@@ -21,15 +21,15 @@ async def send_food_reminder(app):
 async def save_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     update.application.chat_ids.add(update.message.chat_id)
 
-async def main():
-    app = ApplicationBuilder().token(TOKEN).build()
-    app.chat_ids = set()
+# کد اصلی
+app = ApplicationBuilder().token(TOKEN).build()
+app.chat_ids = set()
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("start", save_chat))
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("start", save_chat))
 
-    asyncio.create_task(send_food_reminder(app))
-    await app.run_polling()
+# اجرای تسک در بک‌گراند
+asyncio.get_event_loop().create_task(send_food_reminder(app))
 
-if __name__ == '__main__':
-    asyncio.run(main())
+# اجرای ربات
+app.run_polling()
